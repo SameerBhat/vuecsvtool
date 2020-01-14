@@ -1,5 +1,5 @@
 <template>
-  <nav id="context-menu" class="context-menu">
+  <nav id="context-menu" class="context-menu" ref="context-menu">
     <input type="hidden" ref="selectedRow" value="-1" id="selectedRow" />
 
     <input type="hidden" ref="speakerColSelected" value="false" id="speakerColSelected" />
@@ -158,8 +158,13 @@
 </style>
 
 <script>
+
+import { clipboard } from './mixins/clipboard';
+
 export default {
+  
   props: ["firstRowTitles","isSpeakerSelected"],
+  mixins: [clipboard],
   data() {
     return {
       contextMenuArray: [...this.firstRowTitles],
@@ -212,8 +217,11 @@ export default {
       },
     };
   },
-  created() {
+  mounted() {
     this.contextMenuArray.splice(0, 4);
+
+    this.initializeClipboard(this.$refs["context-menu"]);
+  
   
    
   },

@@ -1,6 +1,6 @@
 <template>
   <div>
-    {{csvDataArray[0][5]}}
+    <!-- {{csvDataArray[0][5]}} -->
     <table id="newTable" class="table table-hover my-3">
       <tbody>
         <tr id="tableHead">
@@ -22,27 +22,30 @@
           <td
             v-for="(csvDataCols, col) in csvDataRows"
             :key="'table-row-' + row + '-col-' + col"
-            :ref="'col' + col"
             v-show="columVisibilityMap[col]"
-            @contextmenu="selectSpeakerActive(col)"
+            
           >
             <textarea
               :data-row="row"
               :data-col="col"
+              :ref="'col' + col"
               v-if="getTextAreaRows(csvDataCols) > 1"
               v-model="csvDataArray[row][col]"
               :rows="getTextAreaRows(csvDataCols)"
-              :disabled="col < 4"
+              :readonly="col < 4"
               :class="'col' + col"
+              @contextmenu="selectSpeakerActive($event, col)"
             ></textarea>
             <input
               v-else
               :data-row="row"
               :data-col="col"
+              :ref="'col' + col"
               type="text"
               v-model="csvDataArray[row][col]"
               :class="'col' + col"
-              :disabled="col < 4"
+              :readonly="col < 4"
+              @contextmenu="selectSpeakerActive($event, col)"
             />
           </td>
         </tr>
@@ -105,11 +108,14 @@
 import ContextMenu from "./ContextMenu";
 import TableFooter from "./TableFooter";
 
+
 export default {
+ 
   components: {
     ContextMenu,
     TableFooter
   },
+  
   props: ["csvDataArray", "fileName"],
   data() {
     return {
@@ -168,10 +174,12 @@ export default {
     };
   },
   mounted() {
-    const clipboardScript = document.createElement("script");
-    clipboardScript.setAttribute("src", "clipboard.js");
-    clipboardScript.async = true;
-    document.head.appendChild(clipboardScript);
+
+    // const clipboardScript = document.createElement("script");
+    // clipboardScript.setAttribute("src", "clipboard.js");
+    // clipboardScript.async = true;
+    // document.head.appendChild(clipboardScript);
+
   },
   methods: {
     getTextAreaRows(text) {
@@ -228,8 +236,14 @@ export default {
 
       this.$forceUpdate();
     },
-    selectSpeakerActive(col){
+    selectSpeakerActive(event, col){
       if(col ==2){
+
+        var input = event.target;
+
+        input.focus();
+        input.select();
+
        
         this.isSpeakerSelected = true;
       }else{
