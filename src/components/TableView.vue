@@ -32,6 +32,7 @@
               v-if="getTextAreaRows(csvDataCols) > 1"
               v-model="csvDataArray[row][col]"
               :rows="getTextAreaRows(csvDataCols)"
+              cols="45"
               :readonly="col < 4"
               :class="'col' + col"
               @contextmenu="selectSpeakerActive($event, col)"
@@ -145,8 +146,8 @@ export default {
         "customer"
       ],
       columVisibilityMap: [
-        true,
-        true,
+        false,
+        false,
         true,
         true,
         true,
@@ -185,8 +186,8 @@ export default {
     getTextAreaRows(text) {
       var textLength = text.length;
 
-      if (textLength > 22) {
-        var rows = Math.ceil(textLength / 22);
+      if (textLength > 35) {
+        var rows = Math.ceil(textLength / 35);
         return rows;
       } else {
         return 1;

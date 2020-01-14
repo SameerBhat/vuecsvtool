@@ -4,16 +4,16 @@
       <nav class="navbar navbar-light bg-light fixed-top">
         <div class="row top-menu">
           <div class="col offset-2">
-            <a href="#">Click Here</a> to find notes on promises
+            <a href="/vzsoi/verint/readme.html" target="_blank">Click Here</a> to find notes on promises
           </div>
           <div class="col offset-1">
-            <a href="#">Click Here</a> to find notes on promises
+            <a href="/vzsoi/verint/second.html" target="_blank">Click Here</a> to find notes on promises
           </div>
         </div>
         <a class="navbar-brand" href="/"> </a>
       </nav>
       <div class="header__bottom-section">
-        <h1 class="text-dark mt-2">Agent's Notes Labeling Tool v2</h1>
+        <h1 class="text-dark mt-2">Agent's Notes Labeling Utility</h1>
       </div>
      
     </div>
