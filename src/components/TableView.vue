@@ -29,7 +29,7 @@
               :data-row="row"
               :data-col="col"
               :ref="'col' + col"
-              v-if="getTextAreaRows(col,csvDataCols) > 1"
+              v-if="getTextAreaRows(col,csvDataCols) > 0.9"
               v-model="csvDataArray[row][col]"
               :rows="getTextAreaRows(col,csvDataCols)"
               :cols="getTextAreaCols(col,csvDataCols)"
@@ -139,16 +139,19 @@ export default {
       if(col == this.paragraphColumn){
         maxTextLengthInRow = 35;
       }else{
-        maxTextLengthInRow = 18;
+        maxTextLengthInRow = 13;
       }
      
       var textLength = text.length;
 
       if (textLength > maxTextLengthInRow) {
         var rows = Math.ceil(textLength / maxTextLengthInRow);
+        console.log(rows)
         return rows;
       } else {
+        console.log(1)
         return 1;
+         
       }
     },
     getTextAreaCols(col,text){
