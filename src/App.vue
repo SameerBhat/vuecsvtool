@@ -10,8 +10,9 @@
 
 <script>
 import Header from './components/Header.vue'
-import UploadFile from './components/UploadFileOld.vue'
-// import UploadFile from './components/UploadFileNew.vue'
+//import UploadFile from './components/UploadFileOld.vue'
+import UploadFile from './components/UploadFileNew.vue'
+// old is new
 
 export default {
   name: 'app',

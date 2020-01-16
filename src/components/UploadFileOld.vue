@@ -167,7 +167,7 @@ export default {
           "promise_cancelled"
         ]
       },
-      readOnlyColumnsLength: 5, // upto first four cols would be read only
+      readOnlyColumnsLength: 5, // upto first five cols would be read only
       paragraphColumn: 4, // paragraph column number
       speakerColumn: 3 // speaker column number
     };

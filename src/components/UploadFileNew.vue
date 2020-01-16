@@ -49,6 +49,9 @@ export default {
       columnNamesArray: [],
       cpn_name: "",
       csvDataArray: [],
+
+      // Setting that are variable for different CSV's
+
       firstRowTitles: [
       "fnum",
         "line",
@@ -79,25 +82,25 @@ export default {
                             false,
                             true,
                             true,
-                            true,
-                            true,
-                            false,
-                            false,
-                            true,
                             false,
                             false,
                             false,
                             false,
-                            true,
-                            false,
-                            false,
-                            true,
                             false,
                             false,
                             false,
                             false,
-                            true,
-                            true
+                            false,
+                            false,
+                            false,
+                            false,
+                            false,
+                            false,
+                            false,
+                            false,
+                            false,
+                            false,
+                            false
       ],
        contextMenuDropdownArrays: {
         topic: {
@@ -149,6 +152,7 @@ export default {
       readOnlyColumnsLength : 4,  // upto first four cols would be read only
       paragraphColumn: 3, // paragraph column number
       speakerColumn:2, // speaker column number
+      
     };
   },
   methods: {
