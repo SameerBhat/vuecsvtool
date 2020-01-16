@@ -5,11 +5,8 @@ export const clipboard = {
 
       taskItemParagaphInContext: null,
       taskItemSpeakerInContext: null,
-      taskItemParagraphClassName: "col3",
-      taskItemSpeakerClassName: "col2",
       contextMenuLinkClassName: "context-menu__link",
       contextMenuActive: "context-menu--active",
-    
       menuState: 0,
       menuWidth: null,
       menuHeight: null,

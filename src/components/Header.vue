@@ -1,5 +1,4 @@
 <template>
-  
     <div class="header">
       <nav class="navbar navbar-light bg-light fixed-top">
         <div class="row top-menu">

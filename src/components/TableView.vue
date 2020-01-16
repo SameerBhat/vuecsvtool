@@ -29,11 +29,11 @@
               :data-row="row"
               :data-col="col"
               :ref="'col' + col"
-              v-if="getTextAreaRows(csvDataCols) > 1"
+              v-if="getTextAreaRows(col,csvDataCols) > 1"
               v-model="csvDataArray[row][col]"
-              :rows="getTextAreaRows(csvDataCols)"
-              cols="45"
-              :readonly="col < 4"
+              :rows="getTextAreaRows(col,csvDataCols)"
+              :cols="getTextAreaCols(col,csvDataCols)"
+              :readonly="col < readOnlyColumnsLength"
               :class="'col' + col"
               @contextmenu="selectSpeakerActive($event, col)"
             ></textarea>
@@ -45,7 +45,7 @@
               type="text"
               v-model="csvDataArray[row][col]"
               :class="'col' + col"
-              :readonly="col < 4"
+              :readonly="col < readOnlyColumnsLength"
               @contextmenu="selectSpeakerActive($event, col)"
             />
           </td>
@@ -67,11 +67,15 @@
     <TableFooter
       :first-row-titles="firstRowTitles"
       :column-visibility-map="columVisibilityMap"
+      :key="footerKey"
     />
     <ContextMenu
       :first-row-titles="firstRowTitles"
-      v-on:send-result-values="handleSelectedText"
+      @send-result-values="handleSelectedText"
       :is-speaker-selected="isSpeakerSelected"
+      :paragraph-column="paragraphColumn"
+      :speaker-column="speakerColumn"
+      :context-menu-dropdown-arrays="contextMenuDropdownArrays"
     />
   </div>
 </template>
@@ -117,81 +121,44 @@ export default {
     TableFooter
   },
   
-  props: ["csvDataArray", "fileName"],
+  props: ["csvDataArray", "fileName",'firstRowTitles','columVisibilityMap', 'readOnlyColumnsLength',"contextMenuDropdownArrays", 'paragraphColumn','speakerColumn'],
   data() {
     return {
-      firstRowTitles: [
-        "fnum",
-        "line",
-        "speaker",
-        "paragraph",
-        "annotators_name",
-        "TOPIC1",
-        "twrd1",
-        "pharse1",
-        "TOPIC2",
-        "twrd2",
-        "pharse2",
-        "sentiment_phrase1",
-        "sentiment_phrase2",
-        "promise1",
-        "pwrd1",
-        "promise_phrase1",
-        "promise2",
-        "pwrd2",
-        "promise_phrase2",
-        "promise_comment",
-        "cpn_name",
-        "agent",
-        "customer"
-      ],
-      columVisibilityMap: [
-        false,
-        false,
-        true,
-        true,
-        true,
-        true,
-        false,
-        false,
-        true,
-        false,
-        false,
-        false,
-        false,
-        true,
-        false,
-        false,
-        true,
-        false,
-        false,
-        false,
-        false,
-        true,
-        true
-      ],
-      isSpeakerSelected:false
+     footerKey: 0,
+      isSpeakerSelected:false,
+      orginalColumVisibilityMap: [...this.columVisibilityMap]
     
     };
   },
-  mounted() {
-
-    // const clipboardScript = document.createElement("script");
-    // clipboardScript.setAttribute("src", "clipboard.js");
-    // clipboardScript.async = true;
-    // document.head.appendChild(clipboardScript);
-
-  },
   methods: {
-    getTextAreaRows(text) {
+    getTextAreaRows(col,text) {
+
+      text = text.replace(/\./g,'');
+
+        var maxTextLengthInRow;
+      if(col == this.paragraphColumn){
+        maxTextLengthInRow = 35;
+      }else{
+        maxTextLengthInRow = 18;
+      }
+     
       var textLength = text.length;
 
-      if (textLength > 35) {
-        var rows = Math.ceil(textLength / 35);
+      if (textLength > maxTextLengthInRow) {
+        var rows = Math.ceil(textLength / maxTextLengthInRow);
         return rows;
       } else {
         return 1;
       }
+    },
+    getTextAreaCols(col,text){
+
+        if(col== this.paragraphColumn){
+          return 45;
+        }else{
+          return 20;
+        }
+
     },
     exportTableToCSV() {
       var csvStringArray = [];
@@ -208,37 +175,37 @@ export default {
       var downloadLink;
       csvFile = new Blob([csv], { type: "text/csv" });
       downloadLink = document.createElement("a");
-      downloadLink.download = this.fileName;
+      downloadLink.download = 'label_'+this.fileName;
       downloadLink.href = window.URL.createObjectURL(csvFile);
       downloadLink.style.display = "none";
       document.body.appendChild(downloadLink);
       downloadLink.click();
     },
     handleSelectedText(data) {
-      // if (data.col == 5 || data.col == 8) {
-      //   //alert("display topic dd");
-      //   console.log("reached step topic dd")
-      // } else if (data.col == 13 || data.col == 16) {
-      //   // alert("display promise dd");
-      //   console.log("reached step promise dd")
-      // } else {
-
+     
 
         if (data.text == "") {
           
           alert("empty text");
         } else {
-         
           this.csvDataArray[data.row][data.col] = data.text;
+          
+          this.replaceArray(this.columVisibilityMap, this.orginalColumVisibilityMap);
+          this.columVisibilityMap[data.col] = true;
+          this.forceRerenderFooter();
         }
       
 
      
 
       this.$forceUpdate();
+      this.TableFooter.$forceUpdate();
     },
+    replaceArray(reference, array) {
+    [].splice.apply(reference, [0, reference.length].concat(array));
+},
     selectSpeakerActive(event, col){
-      if(col ==2){
+      if(col == this.speakerColumn){
 
         var input = event.target;
 
@@ -251,6 +218,9 @@ export default {
                
         this.isSpeakerSelected = false;
       }
+    },
+    forceRerenderFooter() {
+      this.footerKey += 1;  
     }
   }
 };

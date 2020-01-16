@@ -29,7 +29,7 @@
         >
           <li
             class="context-menu__sub-item context-menu__sub-item-multiple context-menu__sub-item-topic"
-            v-for="(topicPropertyValue, topicPropertyName) in dropdownArrays['topic']"
+            v-for="(topicPropertyValue, topicPropertyName) in contextMenuDropdownArrays['topic']"
             :key="topicPropertyName"
           >
             <a href="#" class="context-menu__link">
@@ -66,7 +66,7 @@
         >
           <li
             class="context-menu__sub-item context-menu__sub-item-multiple"
-            v-for="promiseSubItem in dropdownArrays['promise']"
+            v-for="promiseSubItem in contextMenuDropdownArrays['promise']"
             :key="promiseSubItem"
           >
             <a
@@ -163,62 +163,18 @@ import { clipboard } from './mixins/clipboard';
 
 export default {
   
-  props: ["firstRowTitles","isSpeakerSelected"],
+  props: ["firstRowTitles","isSpeakerSelected","paragraphColumn","speakerColumn","contextMenuDropdownArrays"],
   mixins: [clipboard],
   data() {
     return {
       contextMenuArray: [...this.firstRowTitles],
-      dropdownArrays: {
-        topic: {
-          "CD DISC": ["Disconnect"],
-          "CD BILL": ["Bill Explanation"],
-          "CD EQIP": ["How to Setup/Activate", "Setup/Activation Issues"],
-          "CD ACCT": [
-            "Port Status",
-            "Assumption of Liability",
-            "Insurance (TEC/TMP)",
-            "Corporate Information",
-            "Call Message Block",
-            "Change MTN",
-            "Prepaid Information",
-            "Spam/Spoof"
-          ],
-          "CD TRBL": [
-            "Voice",
-            "Date Connection/Browser",
-            "Device Settings & Issues"
-          ],
-          "CD PYMT": ["Promise to Pay", "Make Payment INTL"],
-          "CD INTL": ["Travel Pass", "International Plan Feature Optl"],
-          "CD PLAN": ["Review Current PLAN", "Add/Change"],
-          "CD UPGR": [
-            "Marketing/Promotional Offers",
-            "Device Trade in/Recycling"
-          ],
-          "CD BILL ELEU": ["Discount"]
-        },
-        promise: [
-          "Call_back",
-          "Drop_ship",
-          "Dispatch",
-          "Send_to_offline",
-          "No_charge",
-          "Transfer",
-          "First_appointment",
-          "Sooner_appointment",
-          "Will_be_there_today",
-          "Refer_to_other_group",
-          "Outage_will_be_resolved_by_time",
-          "OTHER",
-          "NO_PROMISE",
-          "BROKEN_PROMISE",
-          "promise_cancelled"
-        ]
-      },
+     
+      taskItemParagraphClassName: "col"+this.paragraphColumn,
+      taskItemSpeakerClassName: "col"+this.speakerColumn,
     };
   },
   mounted() {
-    this.contextMenuArray.splice(0, 4);
+    this.contextMenuArray.splice(0, this.paragraphColumn + 1);
 
     this.initializeClipboard(this.$refs["context-menu"]);
   
@@ -228,16 +184,18 @@ export default {
   computed: {},
   methods: {
     shouldShow(index){
-     
+
+      var indexOfSecondLastCol = this.contextMenuArray.length - 2;
+    
         if(this.isSpeakerSelected){
-            if(index>16){
+            if(index>=indexOfSecondLastCol){
               return true;
             }else{
               return false;
             }
         }else{
 
-          if(index<17){
+          if(index<indexOfSecondLastCol){
         return true;
           }else{
             return false;
