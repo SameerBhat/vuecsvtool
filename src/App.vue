@@ -1,10 +1,7 @@
 <template>
   <div id="app">
-    
     <Header/>
      <UploadFile/>
-
-
   </div>
 </template>
 
