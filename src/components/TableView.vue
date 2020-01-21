@@ -11,7 +11,7 @@
             :ref="'col' + col"
             v-show="columVisibilityMap[col]"
           >
-            <b>{{ firstRowTitle }}</b>
+            <b> {{ firstRowTitle }} </b>
           </td>
         </tr>
 
@@ -146,10 +146,10 @@ export default {
 
       if (textLength > maxTextLengthInRow) {
         var rows = Math.ceil(textLength / maxTextLengthInRow);
-        console.log(rows)
+       
         return rows;
       } else {
-        console.log(1)
+        
         return 1;
          
       }
@@ -169,14 +169,17 @@ export default {
 
       for (let i = 0; i < this.csvDataArray.length; i++) {
         const row = this.csvDataArray[i];
-        const rowString = row.join(",");
+        for(let e = 0; e < this.csvDataArray[i].length; e++){
+          this.csvDataArray[i][e] = this.csvDataArray[i][e].replace(/\n/g, '').trim();
+        }
+       const rowString = row.join(",");
         csvStringArray.push(rowString);
       }
 
       var csv = csvStringArray.join("\n");
       var csvFile;
       var downloadLink;
-      csvFile = new Blob([csv], { type: "text/csv" });
+      csvFile = new Blob([csv], {type:'text/plain',endings:'native'});
       downloadLink = document.createElement("a");
       downloadLink.download = 'label_'+this.fileName;
       downloadLink.href = window.URL.createObjectURL(csvFile);
@@ -191,7 +194,7 @@ export default {
           
           alert("empty text");
         } else {
-          this.csvDataArray[data.row][data.col] = data.text;
+          this.csvDataArray[data.row][data.col] = data.text.trim();
           
           this.replaceArray(this.columVisibilityMap, this.orginalColumVisibilityMap);
           this.columVisibilityMap[data.col] = true;
@@ -202,7 +205,7 @@ export default {
      
 
       this.$forceUpdate();
-      this.TableFooter.$forceUpdate();
+     // this.TableFooter.$forceUpdate();
     },
     replaceArray(reference, array) {
     [].splice.apply(reference, [0, reference.length].concat(array));
