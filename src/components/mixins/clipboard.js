@@ -152,8 +152,42 @@ export const clipboard = {
     this.windowWidth = window.innerWidth;
     this.windowHeight = window.innerHeight;
 
-    menu.style.top = this.clickCoordsY + "px";
-    menu.style.left = this.clickCoordsX + 20 + "px";
+    var doc = document.documentElement;
+    var left = (window.pageXOffset || doc.scrollLeft) - (doc.clientLeft || 0);
+    var top = (window.pageYOffset || doc.scrollTop)  - (doc.clientTop || 0);
+
+    // console.log(`window width `+this.windowWidth)
+    // console.log(`window height `+this.windowHeight)
+    // console.log("from  top distance"+top)
+    // menu.style.top = this.clickCoordsY + "px";
+
+
+    
+    if(this.isSpeakerSelected){
+
+      menu.style.top = this.clickCoordsY -90 + "px";
+      menu.style.left = this.clickCoordsX + 20 + "px";
+
+    }else{
+      menu.style.top = top+10 + "px";
+      menu.style.left = this.clickCoordsX + 20 + "px";
+
+    }
+   
+    
+
+      
+      // if ( (this.windowWidth - this.clickCoordsX) < this.menuWidth ) {
+      //   menu.style.left = this.windowWidth - this.menuWidth + "px";
+      // } else {
+      //   menu.style.left = this.clickCoordsX + "px";
+      // }
+  
+      // if ( (this.windowHeight - this.clickCoordsY) < this.menuHeight ) {
+      //   menu.style.top = this.windowHeight - this.menuHeight + "px";
+      // } else {
+      //   menu.style.top = this.clickCoordsY + "px";
+      // }
   },
   menuItemListener(menu,link) {
     //console.log( "Task ID - " + this.taskItemParagaphInContext.getAttribute("data-id") + ", Task action - " + link.getAttribute("data-action"));

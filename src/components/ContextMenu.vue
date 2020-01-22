@@ -12,8 +12,7 @@
         }"
         v-for="(mainMenuItem, index) in contextMenuArray"
         :key="index"
-        v-show="shouldShow(index)"
-      >
+        v-show="shouldShow(index)">
         <a
           href="#"
           class="context-menu__link"
@@ -50,13 +49,7 @@
             </ul>
 
            
-            <!-- <ul
-              class="context-menu__items context-menu__sub-subitem"
-              v-for="topicSubItemValue in topicPropertyValue"
-              :key="topicSubItemValue"
-            >
-              {{topicSubItemValue}} 
-            </ul> -->
+          
           </li>
         </ul>
 
@@ -174,18 +167,18 @@ export default {
     };
   },
   mounted() {
-    this.contextMenuArray.splice(0, this.paragraphColumn + 1);
-
+    this.contextMenuArray.push("Both", "Neither");
+    this.contextMenuArray.splice(0, this.paragraphColumn + 2);
+    
     this.initializeClipboard(this.$refs["context-menu"]);
   
-  
-   
+
   },
   computed: {},
   methods: {
     shouldShow(index){
 
-      var indexOfSecondLastCol = this.contextMenuArray.length - 2;
+      var indexOfSecondLastCol = this.contextMenuArray.length - 4;
     
         if(this.isSpeakerSelected){
             if(index>=indexOfSecondLastCol){
@@ -206,6 +199,8 @@ export default {
     },
 
     handleDropdownClick(mainMenuItem, topicSubItem) {
+
+      
       const col = this.firstRowTitles.indexOf(mainMenuItem);
       const row = this.$refs["selectedRow"].value;
 
@@ -242,13 +237,21 @@ export default {
         : false;
     },
     handleContextClick(item) {
-      const col = this.firstRowTitles.indexOf(item);
+      
+      var col = this.firstRowTitles.indexOf(item);
+      var selectedText = this.getSelectionText();
+       
+      if(col== -1){
+        if(item === "Both" || item === "Neither"){
+          col = this.firstRowTitles.indexOf("agent");
+          selectedText = item;
+        }
+      }
       const row = this.$refs["selectedRow"].value;
-
       this.$emit("send-result-values", {
         row: row,
         col: col,
-        text: this.getSelectionText()
+        text: selectedText
       });
     },
     getSelectionText() {

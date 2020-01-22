@@ -30,6 +30,7 @@
       :paragraph-column="paragraphColumn"
       :speaker-column="speakerColumn"
       :context-menu-dropdown-arrays="contextMenuDropdownArrays"
+      :cpn-column="cpnColumn"
     
     />
   </div>
@@ -82,6 +83,7 @@ export default {
         false,
         true,
         true,
+        true,
         false,
         false,
         false,
@@ -97,8 +99,7 @@ export default {
         false,
         false,
         false,
-        false,
-        false,
+        true,
         false,
         false
       ],
@@ -169,7 +170,8 @@ export default {
       },
       readOnlyColumnsLength: 5, // upto first five cols would be read only
       paragraphColumn: 4, // paragraph column number
-      speakerColumn: 3 // speaker column number
+      speakerColumn: 3, // speaker column number
+      cpnColumn: 21
     };
   },
   methods: {
@@ -187,12 +189,12 @@ export default {
 
           var titlesLength = this.firstRowTitles.length;
 
-          console.log("total tiles length" + titlesLength);
+         
 
           for (var i = 1; i < rows.length; i++) {
             var cells = rows[i].split(",");
             var lengthDeficit = titlesLength - cells.length;
-            console.log("length of csv tiles is :" + cells.length);
+          
 
             if (lengthDeficit > 0) {
               for (var o = 0; o < lengthDeficit; o++) {
@@ -200,10 +202,18 @@ export default {
               }
             }
 
-            console.log("length of fixed tiles :" + cells.length);
+        
 
             var row = [];
             for (var j = 0; j < cells.length; j++) {
+              
+              if(cells[j].trim().length > 0){
+                
+                if(j > this.speakerColumn){
+                  this.columVisibilityMap[j] = true;
+                }
+                
+              }
               row.push(cells[j]);
             }
             this.csvDataArray.push(row);
