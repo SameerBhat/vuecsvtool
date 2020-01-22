@@ -250,16 +250,8 @@ export default {
           var speakerRowsArray = [];
 
           for (let index = 0; index < this.csvDataArray.length; index++) {
-            const speakerColNumber = this.csvDataArray[index].indexOf(
-              rowSpeakerString
-            );
-
-            if (speakerColNumber != -1) {
-              console.log(
-                "I am here in row number " + index + " col no is " + data.col
-              );
               this.csvDataArray[index][data.col] = rowSpeakerString;
-            }
+            
           }
         }
 
