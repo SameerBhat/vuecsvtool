@@ -18,6 +18,7 @@
         <tr
           v-for="(csvDataRows, row) in csvDataArray"
           :key="'table-row-' + row"
+          v-if="row >= startIndex && row < endIndex"
         >
           <td
             v-for="(csvDataCols, col) in csvDataRows"
@@ -43,7 +44,6 @@
                 cpnCol: cpnColumn,
                 eventBus: eventBus
               }"
-              v-on:some-event="someEvent"
               @contextmenu="selectSpeakerActive($event, col)"
             >
             </textarea>
@@ -66,21 +66,115 @@
       </tbody>
     </table>
 
-    <!-- fab -->
-    <div
-      class="circular-button-fab show-after-upload"
+<div
+      class="circular-button-fab-download show-after-upload"
       @click="exportTableToCSV"
     >
       &darr;
     </div>
 
-    <br />
-    <br />
+    <!-- fab -->
+    <div
+      :class="{active : isPaginationActive}"
+      class="circular-button-fab-paginate show-after-upload"
+     
+    >
+      
+       <label for="togglePagination" class="togglePaginationLabel"
+        v-html="isPaginationActive ? 'p' : 'pp'"></label
+      >
+ <input
+        type="checkbox"
+        class="custom-control-input"
+        id="togglePagination"
+        v-model="isPaginationActive"
+        @change="onPaginationToggle"
+      />      
 
+    </div>
+
+     <div
+      class="custom-control custom-switch"
+      style="display: inline-block;margin: 18px;"
+    >
+      <input
+        type="checkbox"
+        class="custom-control-input"
+        id="togglePagination"
+        v-model="isPaginationActive"
+        @change="onPaginationToggle"
+      />
+      <label class="custom-control-label " for="togglePagination"
+        >Toggle Pagination</label
+      >
+    </div>
+    <div class="pagination-wrapper" style="display: flex;
+    justify-content: flex-start;">
+      <div class="form-group" style="margin: 0px 20px;">
+
+<label for="per-page">Per Page</label>
+      <select
+        class="custom-select"
+        id="per-page"
+        v-model.number="perPage"
+        @change="onChangePerPage"
+        style="width: 92px;margin-left: 10px;">
+      
+        <option value="20">20</option>
+        <option value="30">30</option>
+        <option value="40">40</option>
+        <option value="50">50</option>
+        <option value="60">60</option>
+      </select>
+
+      </div>
+       
+
+      
+
+<nav v-if="isPaginationActive && perPage > 10">
+     
+      <ul class="pagination" style="justify-content: center;">
+        <li :class="{ disabled: !(this.currentPage > 1) }" class="page-item">
+          <a class="page-link" href="#" @click="onPreviousPage($event)"
+            >Previous</a
+          >
+        </li>
+        <span style="display: flex;">
+          <li
+            class="page-item"
+            :class="{ active: n == currentPage }"
+            v-for="n in totalPages"
+            :key="n"
+          >
+            <a class="page-link" href="#" @click="onPageNumber($event, n)">{{
+              n
+            }}</a>
+          </li>
+        </span>
+        <li
+          :class="{ disabled: !(this.currentPage < this.totalPages) }"
+          class="page-item"
+        >
+          <a class="page-link" href="#" @click="onNextPage($event)">Next</a>
+        </li>
+      </ul>
+    </nav> 
+    <span style="padding: 10px;margin-left: 10px; margin-bottom:20px;"> Total Rows: {{ totalRows }}</span>
+    </div>
+     
+
+
+
+
+
+<br />
+    <br />
     <TableFooter
       :first-row-titles="firstRowTitles"
       :column-visibility-map="columVisibilityMap"
       :key="footerKey"
+     
     />
     <ContextMenu
       :first-row-titles="firstRowTitles"
@@ -90,6 +184,8 @@
       :speaker-column="speakerColumn"
       :context-menu-dropdown-arrays="contextMenuDropdownArrays"
     />
+
+ 
   </div>
 </template>
 <style lang="scss">
@@ -100,11 +196,11 @@
   color: white;
 }
 
-.circular-button-fab {
+.circular-button-fab-download {
   border-radius: 30px;
   color: #fff;
-  background-color: #d9534f;
-  border-color: #d43f3a;
+  background-color: #43a047;
+  border-color: #388e3c;
   position: fixed;
   bottom: 0;
   right: 0;
@@ -117,8 +213,54 @@
   margin-bottom: 70px;
   z-index: 1003;
   &:hover {
-    background-color: #d43f3a;
+    background-color: #1b5e20;
     cursor: pointer;
+  }
+}
+
+.circular-button-fab-paginate {
+  border-radius: 30px;
+  color: #fff;
+   background-color: #d9534f;
+  border-color: #d43f3a;
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  margin: 120px;
+  padding: 16px;
+  width: 60px;
+  height: 60px;
+  text-align: center;
+  font-size: 20px;
+  margin-bottom: 70px;
+  z-index: 1003;
+  &:hover{
+    background-color: #283593;
+    cursor: pointer;
+  }
+  &.active{
+    background-color: #283593;
+    &:hover {
+      background-color: #d9534f;
+    }
+  }
+  .togglePaginationLabel{
+    height: 56px;
+    width: 57px;
+    margin-left: -15px;
+    margin-bottom: 0px !important;
+    margin-top: 13px !important;
+    transform: translateY(-15px);
+    &:hover{
+      cursor: pointer;
+    }
+  }
+  .pagination {
+    justify-content: center !important;
+  }
+  .pagination-wrapper{
+    display: flex;
+    justify-content: space-evenly;
   }
 }
 </style>
@@ -166,16 +308,29 @@ export default {
       this.changeAnnonatorField(data);
     });
 
-     this.eventBus.$on("changeCpnValue", data => {
+    this.eventBus.$on("changeCpnValue", data => {
       this.changeCpnField(data);
     });
   },
+  mounted() {
+    this.totalRows = this.csvDataArray.length;
+
+    this.disablePagination();
+  },
+
   data() {
     return {
       eventBus: bus,
       footerKey: 0,
       isSpeakerSelected: false,
-      orginalColumVisibilityMap: [...this.columVisibilityMap]
+      orginalColumVisibilityMap: [...this.columVisibilityMap],
+      isPaginationActive: false,
+      totalRows: null,
+      currentPage: 1,
+      totalPages: null,
+      perPage: 60,
+      startIndex: 0,
+      endIndex: null
     };
   },
   methods: {
@@ -250,8 +405,7 @@ export default {
           var speakerRowsArray = [];
 
           for (let index = 0; index < this.csvDataArray.length; index++) {
-              this.csvDataArray[index][data.col] = rowSpeakerString;
-            
+            this.csvDataArray[index][data.col] = rowSpeakerString;
           }
         }
 
@@ -293,8 +447,78 @@ export default {
         this.csvDataArray[index][this.cpnColumn] = value;
       }
     },
-    someEvent() {
-      console.log("Some event");
+    onNextPage(event) {
+      event.preventDefault();
+
+      if (this.currentPage <= this.totalPages) {
+        this.currentPage++;
+        this.startIndex = this.endIndex;
+        this.endIndex = this.endIndex + this.perPage;
+        console.log(
+          `total rows: ${this.totalRows}, total pages: ${this.totalPages}, current page: ${this.currentPage}, per page: ${this.perPage}, total pages: ${this.totalPages}, start idex: ${this.startIndex}, end index: ${this.endIndex}`
+        );
+      }
+    },
+    onPreviousPage(event) {
+      event.preventDefault();
+      if (this.currentPage > 1) {
+        this.currentPage--;
+        this.endIndex = this.startIndex;
+        this.startIndex = this.endIndex - this.perPage;
+        console.log(
+          `total rows: ${this.totalRows}, total pages: ${this.totalPages}, current page: ${this.currentPage}, per page: ${this.perPage}, total pages: ${this.totalPages}, start idex: ${this.startIndex}, end index: ${this.endIndex}`
+        );
+      }
+    },
+    onPageNumber(event, n) {
+      event.preventDefault();
+      this.resetPageTo(n);
+    },
+    onChangePerPage() {
+      if (this.totalRows < this.perPage) {
+        this.perPage = this.totalRows;
+      }
+      // this.perPage = parseInt(this.perPage);
+      var n = 1;
+      this.resetPageTo(n);
+    },
+    onPaginationToggle() {
+      if (this.isPaginationActive) {
+        this.enablePagination();
+        this.resetPageTo(1);
+      } else {
+        this.disablePagination();
+      }
+    },
+    disablePagination() {
+      this.startIndex = 0;
+      this.endIndex = this.totalRows;
+      this.togglePagination = false;
+      console.log(
+        `total rows: ${this.totalRows}, total pages: ${this.totalPages}, current page: ${this.currentPage}, per page: ${this.perPage}, total pages: ${this.totalPages}, start idex: ${this.startIndex}, end index: ${this.endIndex}`
+      );
+    },
+    enablePagination(){
+      this.totalPages = Math.ceil(this.totalRows / this.perPage);
+    this.endIndex = this.perPage;
+
+    if (this.totalRows < this.perPage) {
+      this.perPage = this.totalRows;
+    }
+
+    console.log(
+      `total rows: ${this.totalRows}, total pages: ${this.totalPages}, current page: ${this.currentPage}, per page: ${this.perPage}, total pages: ${this.totalPages}, start idex: ${this.startIndex}, end index: ${this.endIndex},`
+    );
+    },
+    resetPageTo(n) {
+      const std = n - 1;
+      this.totalPages = Math.ceil(this.totalRows / this.perPage);
+      this.currentPage = n;
+      this.startIndex = std * this.perPage;
+      this.endIndex = std * this.perPage + this.perPage;
+      console.log(
+        `total rows: ${this.totalRows}, total pages: ${this.totalPages}, current page: ${this.currentPage}, per page: ${this.perPage}, total pages: ${this.totalPages}, start idex: ${this.startIndex}, end index: ${this.endIndex}`
+      );
     }
   }
 };
