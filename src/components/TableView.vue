@@ -19,6 +19,7 @@
           v-for="(csvDataRows, row) in csvDataArray"
           :key="'table-row-' + row"
           v-if="row >= startIndex && row < endIndex"
+          :class="{greenBackground : isSpeaker1(row)}"
         >
           <td
             v-for="(csvDataCols, col) in csvDataRows"
@@ -38,7 +39,7 @@
               :cols="getTextAreaCols(col, csvDataCols)"
               :readonly="col < readOnlyColumnsLength"
               :class="'col' + col"
-              v-sameer="{
+              v-custom="{
                 col: col,
                 annonCol: paragraphColumn + 1,
                 cpnCol: cpnColumn,
@@ -66,7 +67,7 @@
       </tbody>
     </table>
 
-<div
+    <div
       class="circular-button-fab-download show-after-upload"
       @click="exportTableToCSV"
     >
@@ -75,28 +76,27 @@
 
     <!-- fab -->
     <div
-      :class="{active : isPaginationActive}"
+      :class="{ active: isPaginationActive }"
       class="circular-button-fab-paginate show-after-upload"
-     
-    >
-      
-       <label for="togglePagination" class="togglePaginationLabel"
-        v-html="isPaginationActive ? 'p' : 'pp'"></label
-      >
- <input
+      v-if="showPaginationBar()">
+    
+      <label
+        for="togglePagination"
+        class="togglePaginationLabel"
+        v-html="isPaginationActive ? 'p' : 'pp'"
+      ></label>
+      <input
         type="checkbox"
         class="custom-control-input"
         id="togglePagination"
         v-model="isPaginationActive"
         @change="onPaginationToggle"
-      />      
-
+      />
     </div>
-
-     <div
+<div v-if="showPaginationBar() && this.isPaginationActive">
+    <div
       class="custom-control custom-switch"
-      style="display: inline-block;margin: 18px;"
-    >
+      style="display: inline-block;margin: 18px;">
       <input
         type="checkbox"
         class="custom-control-input"
@@ -108,73 +108,66 @@
         >Toggle Pagination</label
       >
     </div>
-    <div class="pagination-wrapper" style="display: flex;
-    justify-content: flex-start;">
+    <div class="pagination-wrapper" style="display: flex;justify-content: flex-start;" >
       <div class="form-group" style="margin: 0px 20px;">
-
-<label for="per-page">Per Page</label>
-      <select
-        class="custom-select"
-        id="per-page"
-        v-model.number="perPage"
-        @change="onChangePerPage"
-        style="width: 92px;margin-left: 10px;">
-      
-        <option value="20">20</option>
-        <option value="30">30</option>
-        <option value="40">40</option>
-        <option value="50">50</option>
-        <option value="60">60</option>
-      </select>
-
-      </div>
-       
-
-      
-
-<nav v-if="isPaginationActive && perPage > 10">
-     
-      <ul class="pagination" style="justify-content: center;">
-        <li :class="{ disabled: !(this.currentPage > 1) }" class="page-item">
-          <a class="page-link" href="#" @click="onPreviousPage($event)"
-            >Previous</a
-          >
-        </li>
-        <span style="display: flex;">
-          <li
-            class="page-item"
-            :class="{ active: n == currentPage }"
-            v-for="n in totalPages"
-            :key="n"
-          >
-            <a class="page-link" href="#" @click="onPageNumber($event, n)">{{
-              n
-            }}</a>
-          </li>
-        </span>
-        <li
-          :class="{ disabled: !(this.currentPage < this.totalPages) }"
-          class="page-item"
+        <label for="per-page">Per Page</label>
+        <select
+          class="custom-select"
+          id="per-page"
+          v-model.number="perPage"
+          @change="onChangePerPage"
+          style="width: 92px;margin-left: 10px;"
         >
-          <a class="page-link" href="#" @click="onNextPage($event)">Next</a>
-        </li>
-      </ul>
-    </nav> 
-    <span style="padding: 10px;margin-left: 10px; margin-bottom:20px;"> Total Rows: {{ totalRows }}</span>
+          <option value="20">20</option>
+          <option value="30">30</option>
+          <option value="40">40</option>
+          <option value="50">50</option>
+          <option value="60">60</option>
+          <option value="70">70</option>
+          <option value="80">80</option>
+        </select>
+      </div>
+
+      <nav v-if="showPaginationBar()">
+        <ul class="pagination" style="justify-content: center;">
+          <li :class="{ disabled: !(this.currentPage > 1) }" class="page-item">
+            <a class="page-link" href="#" @click="onPreviousPage($event)"
+              >Previous</a
+            >
+          </li>
+          <span style="display: flex;">
+            <li
+              class="page-item"
+              :class="{ active: n == currentPage }"
+              v-for="n in totalPages"
+              :key="n"
+            >
+              <a class="page-link" href="#" @click="onPageNumber($event, n)">{{
+                n
+              }}</a>
+            </li>
+          </span>
+          <li
+            :class="{ disabled: !(this.currentPage < this.totalPages) }"
+            class="page-item"
+          >
+            <a class="page-link" href="#" @click="onNextPage($event)">Next</a>
+          </li>
+        </ul>
+      </nav>
+      <span style="padding: 10px;margin-left: 10px; margin-bottom:20px;">
+        Total Rows: {{ totalRows }}</span
+      >
     </div>
-     
 
+    </div>
 
-
-
-
-<br />
+    <br />
     <br />
     <TableFooter
       :first-row-titles="firstRowTitles"
       :column-visibility-map="columVisibilityMap"
       :key="footerKey"
-     
     />
     <ContextMenu
       :first-row-titles="firstRowTitles"
@@ -184,8 +177,6 @@
       :speaker-column="speakerColumn"
       :context-menu-dropdown-arrays="contextMenuDropdownArrays"
     />
-
- 
   </div>
 </template>
 <style lang="scss">
@@ -196,6 +187,13 @@
   color: white;
 }
 
+.greenBackground{
+  background: #4CAF50;
+
+  &:hover{
+     background-color: #388E3C !important;
+  }
+}
 .circular-button-fab-download {
   border-radius: 30px;
   color: #fff;
@@ -221,7 +219,7 @@
 .circular-button-fab-paginate {
   border-radius: 30px;
   color: #fff;
-   background-color: #d9534f;
+  background-color: #d9534f;
   border-color: #d43f3a;
   position: fixed;
   bottom: 0;
@@ -234,31 +232,31 @@
   font-size: 20px;
   margin-bottom: 70px;
   z-index: 1003;
-  &:hover{
+  &:hover {
     background-color: #283593;
     cursor: pointer;
   }
-  &.active{
+  &.active {
     background-color: #283593;
     &:hover {
       background-color: #d9534f;
     }
   }
-  .togglePaginationLabel{
+  .togglePaginationLabel {
     height: 56px;
     width: 57px;
     margin-left: -15px;
     margin-bottom: 0px !important;
     margin-top: 13px !important;
     transform: translateY(-15px);
-    &:hover{
+    &:hover {
       cursor: pointer;
     }
   }
   .pagination {
     justify-content: center !important;
   }
-  .pagination-wrapper{
+  .pagination-wrapper {
     display: flex;
     justify-content: space-evenly;
   }
@@ -286,7 +284,7 @@ export default {
     "cpnColumn"
   ],
   directives: {
-    sameer: {
+    custom: {
       bind: (el, binding, vnode) => {
         if (binding.value.col == binding.value.annonCol) {
           el.addEventListener("keyup", $event => {
@@ -304,6 +302,7 @@ export default {
     }
   },
   created() {
+  
     this.eventBus.$on("changeAnnonatorValue", data => {
       this.changeAnnonatorField(data);
     });
@@ -494,21 +493,22 @@ export default {
       this.startIndex = 0;
       this.endIndex = this.totalRows;
       this.togglePagination = false;
+      this.isPaginationActive = false;
       console.log(
         `total rows: ${this.totalRows}, total pages: ${this.totalPages}, current page: ${this.currentPage}, per page: ${this.perPage}, total pages: ${this.totalPages}, start idex: ${this.startIndex}, end index: ${this.endIndex}`
       );
     },
-    enablePagination(){
+    enablePagination() {
       this.totalPages = Math.ceil(this.totalRows / this.perPage);
-    this.endIndex = this.perPage;
+      this.endIndex = this.perPage;
 
-    if (this.totalRows < this.perPage) {
-      this.perPage = this.totalRows;
-    }
+      if (this.totalRows < this.perPage) {
+        this.perPage = this.totalRows;
+      }
 
-    console.log(
-      `total rows: ${this.totalRows}, total pages: ${this.totalPages}, current page: ${this.currentPage}, per page: ${this.perPage}, total pages: ${this.totalPages}, start idex: ${this.startIndex}, end index: ${this.endIndex},`
-    );
+      console.log(
+        `total rows: ${this.totalRows}, total pages: ${this.totalPages}, current page: ${this.currentPage}, per page: ${this.perPage}, total pages: ${this.totalPages}, start idex: ${this.startIndex}, end index: ${this.endIndex},`
+      );
     },
     resetPageTo(n) {
       const std = n - 1;
@@ -519,6 +519,14 @@ export default {
       console.log(
         `total rows: ${this.totalRows}, total pages: ${this.totalPages}, current page: ${this.currentPage}, per page: ${this.perPage}, total pages: ${this.totalPages}, start idex: ${this.startIndex}, end index: ${this.endIndex}`
       );
+    },
+    showPaginationBar() {
+    
+      return (this.totalRows > this.perPage);
+    },
+    isSpeaker1(row){
+        
+        return(this.csvDataArray[row][this.speakerColumn].toLowerCase().includes("speaker1"))
     }
   }
 };
