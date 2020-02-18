@@ -11,6 +11,7 @@
         </div>
         <a class="navbar-brand" href="/"> </a>
       </nav>
+      
       <div class="header__bottom-section">
         <h1 class="text-dark mt-2">Agent's Notes Labeling Utility</h1>
       </div>
