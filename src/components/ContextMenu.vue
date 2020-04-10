@@ -169,7 +169,8 @@ export default {
   mounted() {
     this.contextMenuArray.push("Both", "Neither");
     this.contextMenuArray.splice(0, this.paragraphColumn + 2);
-    
+
+   
     this.initializeClipboard(this.$refs["context-menu"]);
   
 
@@ -178,7 +179,15 @@ export default {
   methods: {
     shouldShow(index){
 
-      var indexOfSecondLastCol = this.contextMenuArray.length - 4;
+        var indexOfSecondLastCol;
+
+ if(this.paragraphColumn != 6){
+     indexOfSecondLastCol = this.contextMenuArray.length - 4;
+    }else {
+indexOfSecondLastCol = this.contextMenuArray.length - 2;
+    }
+    
+       
     
         if(this.isSpeakerSelected){
             if(index>=indexOfSecondLastCol){

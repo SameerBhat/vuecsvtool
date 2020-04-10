@@ -27,10 +27,11 @@
       :first-row-titles="firstRowTitles"
       :colum-visibility-map="columVisibilityMap"
       :read-only-columns-length="readOnlyColumnsLength"
-      :paragraph-column="paragraphColumn" 
+      :paragraph-column="paragraphColumn"
       :speaker-column="speakerColumn"
       :context-menu-dropdown-arrays="contextMenuDropdownArrays"
       :cpn-column="cpnColumn"
+    
     />
   </div>
 </template>
@@ -50,37 +51,33 @@ export default {
       columnNamesArray: [],
       cpn_name: "",
       csvDataArray: [],
-
-      // Setting that are variable for different CSV's
-
-      firstRowTitles: [
-            "fnum",
-              "line",
-              "speaker",
-              "paragraph",
-              "annotators_name",
-              "TOPIC1",
-              "twrd1",
-              "pharse1",
-              "TOPIC2",
-              "twrd2",
-              "pharse2",
-              "sentiment_phrase1",
-              "sentiment_phrase2",
-              "promise1",
-              "pwrd1",
-              "promise_phrase1",
-              "promise2",
-              "pwrd2",
-              "promise_phrase2",
-              "promise_comment",
-              "cpn_name",
-              "agent",
-              "customer"
-            ],
-      columVisibilityMap: [
+      firstRowTitles: ["fnum",
+                        "Call_id",
+                        "start_time",
+                        "end_time",
+                        "label",
+                        "speaker",
+                        "paragraph",
+                        "annotators_name",
+                        "TOPIC1",
+                        "key_words1",
+                        "pharse1",
+                        "TOPIC2",
+                        "key_words2",
+                        "pharse2",
+                        "promise1",
+                        "pwrd1",
+                        "promise_phrase1",
+                        "promise2",
+                        "pwrd2",
+                        "promise_phrase2",
+                        "promise_comment",
+                        "cpn_name"],
+      columVisibilityMap:  [false,
                             false,
                             false,
+                            false,
+                            true,
                             true,
                             true,
                             true,
@@ -90,47 +87,60 @@ export default {
                             false,
                             false,
                             false,
-                            false,
-                            false,
-                            false,
-                            false,
-                            false,
-                            false,
-                            false,
-                            false,
-                            false,
+                            true,
+                            true,
                             true,
                             false,
-                            false
-      ],
-       contextMenuDropdownArrays: {
+                            false,
+                            false,
+                            false,
+                            true],
+      contextMenuDropdownArrays: {
         topic: {
-          "CD DISC": ["Disconnect"],
-          "CD BILL": ["Bill Explanation"],
-          "CD EQIP": ["How to Setup/Activate", "Setup/Activation Issues"],
-          "CD ACCT": [
-            "Port Status",
-            "Assumption of Liability",
-            "Insurance (TEC/TMP)",
-            "Corporate Information",
-            "Call Message Block",
-            "Change MTN",
-            "Prepaid Information",
-            "Spam/Spoof"
+          Internet: [
+            "Account_setup",
+            "i_Can_t_connect_all",
+            "i_Can_t_connect_device",
+            "i_Customer_Equipment",
+            "i_Email",
+            "i_Mobile_TV_apps",
+            "i_Slow_connection",
+            "i_Wi_Fi"
           ],
-          "CD TRBL": [
-            "Voice",
-            "Date Connection/Browser",
-            "Device Settings & Issues"
+          Phone: [
+            "All_Services_out",
+            "p_Calling_features",
+            "p_Can_t_be_called",
+            "p_Can_t_call_long_distance",
+            "p_Can_t_call_out",
+            "p_CPE_Jacks",
+            "p_Miscellaneous",
+            "p_No_Dial_Tone",
+            "p_Noise_Static",
+            "p_ONT_battery",
+            "p_Order_billing",
+            "p_Physical_Outside",
+            "p_Self_install",
+            "p_Voicemail"
           ],
-          "CD PYMT": ["Promise to Pay", "Make Payment INTL"],
-          "CD INTL": ["Travel Pass", "International Plan Feature Optl"],
-          "CD PLAN": ["Review Current PLAN", "Add/Change"],
-          "CD UPGR": [
-            "Marketing/Promotional Offers",
-            "Device Trade in/Recycling"
+          TV: [
+            "All_channels_out",
+            "t_Audio_problems",
+            "t_Cable_card",
+            "t_Caller_ID_on_TV",
+            "t_Customer_Equipment",
+            "t_DVR_functionality",
+            "t_Interactive_Media_Guide",
+            "t_Mobile_TV_apps",
+            "t_On_Demand",
+            "t_Pay_per_view",
+            "t_Remote_controls",
+            "t_Set_top_box_problems",
+            "t_Some_Channels_Out",
+            "t_STB_activation",
+            "t_TV_content_questions"
           ],
-          "CD BILL ELEU": ["Discount"]
+          "Other": ["Other"]
         },
         promise: [
           "Call_back",
@@ -150,11 +160,10 @@ export default {
           "promise_cancelled"
         ]
       },
-      readOnlyColumnsLength : 4,  // upto first four cols would be read only
-      paragraphColumn: 3, // paragraph column number
-      speakerColumn:2, // speaker column number
-      cpnColumn : 20
-      
+      readOnlyColumnsLength: 7, // upto first five cols would be read only
+      paragraphColumn: 6, // paragraph column number
+      speakerColumn: 20, // speaker column number
+      cpnColumn: 20
     };
   },
   methods: {
@@ -172,23 +181,25 @@ export default {
 
           var titlesLength = this.firstRowTitles.length;
 
-        
+         
 
           for (var i = 1; i < rows.length; i++) {
             var cells = rows[i].split(",");
             var lengthDeficit = titlesLength - cells.length;
-           
+          
+
             if (lengthDeficit > 0) {
               for (var o = 0; o < lengthDeficit; o++) {
                 cells.push("");
               }
             }
 
-         
-          
+        
+
             var row = [];
             for (var j = 0; j < cells.length; j++) {
-                if(cells[j].trim().length > 0){
+              
+              if(cells[j].trim().length > 0){
                 
                 if(j > this.speakerColumn){
                   this.columVisibilityMap[j] = true;

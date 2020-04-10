@@ -395,6 +395,7 @@ export default {
           this.speakerColumn
         ];
 
+
        /// console.log(rowSpeakerString);
 
         if (
