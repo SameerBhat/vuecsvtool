@@ -32,8 +32,7 @@
               :ref="'col' + col"
               v-if="
                 (col == paragraphColumn + 1 && row == 0) ||
-                  (col == cpnColumn && row == 0)
-              "
+                  (col == cpnColumn && row == 0)"
               v-model.lazy="csvDataArray[row][col]"
               :rows="getTextAreaRows(col, csvDataCols)"
               :cols="getTextAreaCols(col, csvDataCols)"
@@ -93,6 +92,7 @@
         @change="onPaginationToggle"
       />
     </div>
+    
 <div v-if="showPaginationBar() && this.isPaginationActive">
     <div
       class="custom-control custom-switch"

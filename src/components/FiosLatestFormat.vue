@@ -72,7 +72,9 @@ export default {
                         "pwrd2",
                         "promise_phrase2",
                         "promise_comment",
-                        "cpn_name"],
+                        "cpn_name",
+                        "agent",
+                        "customer"],
       columVisibilityMap:  [false,
                             false,
                             false,
@@ -94,7 +96,9 @@ export default {
                             false,
                             false,
                             false,
-                            true],
+                            true,
+                            true,
+                            true ],
       contextMenuDropdownArrays: {
         topic: {
           Internet: [
@@ -162,7 +166,7 @@ export default {
       },
       readOnlyColumnsLength: 7, // upto first five cols would be read only
       paragraphColumn: 6, // paragraph column number
-      speakerColumn: 20, // speaker column number
+      speakerColumn: 5, // speaker column number
       cpnColumn: 20
     };
   },

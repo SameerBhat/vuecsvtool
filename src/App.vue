@@ -7,9 +7,9 @@
 
 <script>
 import Header from './components/Header.vue'
-import UploadFile from './components/UploadFileOld.vue'
+//import UploadFile from './components/UploadFileOld.vue'
 //import UploadFile from './components/UploadFileNew.vue'
-//import UploadFile from './components/FiosLatestFormat.vue'
+import UploadFile from './components/FiosLatestFormat.vue'
 
 export default {
   name: 'app',

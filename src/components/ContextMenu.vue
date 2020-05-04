@@ -179,13 +179,15 @@ export default {
   methods: {
     shouldShow(index){
 
-        var indexOfSecondLastCol;
+//         var indexOfSecondLastCol;
 
- if(this.paragraphColumn != 6){
-     indexOfSecondLastCol = this.contextMenuArray.length - 4;
-    }else {
-indexOfSecondLastCol = this.contextMenuArray.length - 2;
-    }
+//  if(this.paragraphColumn != 6){
+//      indexOfSecondLastCol = this.contextMenuArray.length - 4;
+//     }else {
+// indexOfSecondLastCol = this.contextMenuArray.length - 2;
+//     }
+
+var indexOfSecondLastCol = this.contextMenuArray.length - 4;
     
        
     
