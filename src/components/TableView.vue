@@ -395,7 +395,6 @@ export default {
           this.speakerColumn
         ];
 
-
        /// console.log(rowSpeakerString);
 
         if (
@@ -403,9 +402,11 @@ export default {
           textString.toLowerCase() == "speaker2" ||
           textString.toLowerCase() == "channel_1" ||
           textString.toLowerCase() == "channel_2" ||
+          textString.toLowerCase() == "agent" ||
+          textString.toLowerCase() == "customer" ||
           textString.toLowerCase() == "both" ||
           textString.toLowerCase() == "neither" 
-        ) {
+) {
           var speakerRowsArray = [];
 
           for (let index = 0; index < this.csvDataArray.length; index++) {
